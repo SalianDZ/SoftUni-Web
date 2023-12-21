@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MVCIntroDemo.Models;
+using MVCIntroDemo.ViewModels;
 using System.Diagnostics;
 
 namespace MVCIntroDemo.Controllers

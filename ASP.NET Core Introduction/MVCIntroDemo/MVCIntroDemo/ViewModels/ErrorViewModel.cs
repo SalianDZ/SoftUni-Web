@@ -1,4 +1,4 @@
-namespace MVCIntroDemo.Models
+namespace MVCIntroDemo.ViewModels
 {
     public class ErrorViewModel
     {
