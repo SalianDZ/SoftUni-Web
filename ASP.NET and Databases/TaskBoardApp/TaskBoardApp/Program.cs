@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskBoardApp.Data;
+using TaskBoardApp.Data.Models;
+using TaskBoardApp.Services;
+using TaskBoardApp.Services.Interfaces;
 
 namespace TaskBoardApp
 {
@@ -12,7 +15,7 @@ namespace TaskBoardApp
 
 			// Add services to the container.
 			var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-			builder.Services.AddDbContext<ApplicationDbContext>(options =>
+			builder.Services.AddDbContext<TaskBoardDbContext>(options =>
 				options.UseSqlServer(connectionString));
 			builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -24,7 +27,10 @@ namespace TaskBoardApp
 					options.Password.RequireUppercase = false;
 					options.Password.RequireNonAlphanumeric = false;
 				})
-				.AddEntityFrameworkStores<ApplicationDbContext>();
+				.AddEntityFrameworkStores<TaskBoardDbContext>();
+
+			builder.Services.AddScoped<IBoardService, BoardService>();
+
 			builder.Services.AddControllersWithViews();
 
 			var app = builder.Build();
