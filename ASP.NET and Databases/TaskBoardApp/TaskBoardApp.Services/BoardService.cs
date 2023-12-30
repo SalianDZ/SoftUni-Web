@@ -14,7 +14,7 @@ namespace TaskBoardApp.Services
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<BoardAllViewModel>> AllAsync()
+		public async Task<IEnumerable<BoardAllViewModel>> AllAsync()
         {
             IEnumerable<BoardAllViewModel> allBoards = await dbContext.Boards.Select(x => new BoardAllViewModel()
             {
@@ -30,5 +30,23 @@ namespace TaskBoardApp.Services
 
             return allBoards;
         }
-    }
+
+		public async Task<IEnumerable<BoardSelectViewModel>> AllForSelectAsync()
+		{
+            IEnumerable<BoardSelectViewModel> allBoards = await dbContext.Boards
+                .Select(b => new BoardSelectViewModel()
+                {
+                    Id = b.Id,
+                    Name = b.Name
+                }).ToArrayAsync();
+
+            return allBoards;
+		}
+
+		public async Task<bool> ExistsByIdAsync(int id)
+		{
+            bool result = await dbContext.Boards.AnyAsync(b => b.Id == id);
+            return result;
+		}
+	}
 }

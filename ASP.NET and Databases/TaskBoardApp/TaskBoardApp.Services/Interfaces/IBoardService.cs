@@ -7,9 +7,8 @@ namespace TaskBoardApp.Services.Interfaces
     {
         Task<IEnumerable<BoardAllViewModel>> AllAsync();
 
-        //Not implemented yet.
-		Task<BoardAllViewModel> AddAsync();
+        Task<IEnumerable<BoardSelectViewModel>> AllForSelectAsync();
 
-		Task<BoardAllViewModel> AddAsync(TaskViewModel model);
+        Task<bool> ExistsByIdAsync(int id);
     }
 }
