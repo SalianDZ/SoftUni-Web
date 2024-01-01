@@ -7,5 +7,7 @@ namespace TaskBoardApp.Services.Interfaces
 		Task AddAsync(string ownerId, TaskFormModel viewModel);
 
 		Task<TaskDetailsViewModel> GetForDetailsByIdAsync(string id);
+
+		Task<TaskEditGetViewModel> GetForEditByIdAsync(string id);
 	}
 }

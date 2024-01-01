@@ -66,5 +66,21 @@ namespace TaskBoardApp.Controllers
 				return RedirectToAction("All", "Board");
 			}
 		}
+
+		[HttpGet]
+		public async Task<IActionResult> Edit(string id)
+		{
+			TaskEditGetViewModel model = await taskService.GetForEditByIdAsync(id);
+			TaskFormModel modelForm = new TaskFormModel()
+			{ 
+				Title = model.Title,
+				Description = model.Description,
+				BoardId = model.BoardId,
+				AllBoards = await boardService.AllForSelectAsync(),
+			};
+
+			return View(modelForm);
+		}
+
 	}
 }

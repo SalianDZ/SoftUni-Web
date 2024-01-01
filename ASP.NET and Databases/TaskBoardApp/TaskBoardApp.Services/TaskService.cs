@@ -45,5 +45,21 @@ namespace TaskBoardApp.Services
 
 			return viewModel;
 		}
+
+		public async Task<TaskEditGetViewModel> GetForEditByIdAsync(string id)
+		{
+			TaskEditGetViewModel viewModel = await dbContext
+				.Tasks
+				.Select(t => new TaskEditGetViewModel()
+				{
+					Id = t.Id.ToString(),
+					Title = t.Title,
+					Description = t.Description,
+					BoardId = t.BoardId
+				})
+				.FirstAsync(t => t.Id == id);
+
+			return viewModel;
+		}
 	}
 }
