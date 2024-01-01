@@ -70,16 +70,23 @@ namespace TaskBoardApp.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Edit(string id)
 		{
-			TaskEditGetViewModel model = await taskService.GetForEditByIdAsync(id);
-			TaskFormModel modelForm = new TaskFormModel()
-			{ 
-				Title = model.Title,
-				Description = model.Description,
-				BoardId = model.BoardId,
-				AllBoards = await boardService.AllForSelectAsync(),
-			};
+			try
+			{
+				TaskEditGetViewModel model = await taskService.GetForEditByIdAsync(id);
+				TaskFormModel modelForm = new TaskFormModel()
+				{
+					Title = model.Title,
+					Description = model.Description,
+					BoardId = model.BoardId,
+					AllBoards = await boardService.AllForSelectAsync(),
+				};
 
-			return View(modelForm);
+				return View(modelForm);
+			}
+			catch (Exception)
+			{
+				return RedirectToAction("All", "Board");
+			}
 		}
 
 		[HttpPost]
@@ -102,6 +109,28 @@ namespace TaskBoardApp.Controllers
 			TaskEditGetViewModel model = await taskService.GetForEditByIdAsync(id);
 
 			await taskService.EditAsync(model, taskModel);
+			return RedirectToAction("All", "Board");
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Delete(string id)
+		{
+			try
+			{
+				TaskViewModel model = await taskService.GetTaskViewModelByIdAsync(id);
+				return View(model);
+
+			}
+			catch (Exception)
+			{
+				return RedirectToAction("All", "Board");
+			}
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Delete(string id, TaskViewModel taskModel)
+		{
+			await taskService.Delete(taskModel);
 			return RedirectToAction("All", "Board");
 		}
 	}

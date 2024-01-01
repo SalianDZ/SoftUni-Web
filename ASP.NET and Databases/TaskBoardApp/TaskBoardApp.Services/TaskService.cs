@@ -28,6 +28,13 @@ namespace TaskBoardApp.Services
 			await dbContext.SaveChangesAsync();
 		}
 
+		public async Task Delete(TaskViewModel model)
+		{
+			Data.Models.Task task = await dbContext.Tasks.FirstAsync(t => t.Id.ToString() == model.Id);
+			dbContext.Tasks.Remove(task);
+			await dbContext.SaveChangesAsync();
+		}
+
 		public async Task EditAsync(TaskEditGetViewModel viewModel, TaskFormModel model)
 		{
 			Data.Models.Task wantedTask = await dbContext
@@ -68,6 +75,22 @@ namespace TaskBoardApp.Services
 					Title = t.Title,
 					Description = t.Description,
 					BoardId = t.BoardId
+				})
+				.FirstAsync(t => t.Id == id);
+
+			return viewModel;
+		}
+
+		public async Task<TaskViewModel> GetTaskViewModelByIdAsync(string id)
+		{
+			TaskViewModel viewModel = await dbContext
+				.Tasks
+				.Select(t => new TaskViewModel()
+				{
+					Id = t.Id.ToString(),
+					Title = t.Title,
+					Description = t.Description,
+					Owner = t.Owner.Id
 				})
 				.FirstAsync(t => t.Id == id);
 

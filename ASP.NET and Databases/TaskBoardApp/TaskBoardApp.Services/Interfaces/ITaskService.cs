@@ -11,5 +11,9 @@ namespace TaskBoardApp.Services.Interfaces
 		Task<TaskEditGetViewModel> GetForEditByIdAsync(string id);
 
 		Task EditAsync(TaskEditGetViewModel viewModel, TaskFormModel model);
+
+		Task Delete(TaskViewModel model);
+
+		Task<TaskViewModel> GetTaskViewModelByIdAsync(string id);
 	}
 }
