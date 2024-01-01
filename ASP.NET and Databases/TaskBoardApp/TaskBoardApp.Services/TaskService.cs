@@ -28,6 +28,18 @@ namespace TaskBoardApp.Services
 			await dbContext.SaveChangesAsync();
 		}
 
+		public async Task EditAsync(TaskEditGetViewModel viewModel, TaskFormModel model)
+		{
+			Data.Models.Task wantedTask = await dbContext
+				.Tasks.FirstAsync(t => t.Id.ToString() == viewModel.Id);
+
+			wantedTask.Title = model.Title;
+			wantedTask.Description = model.Description;
+			wantedTask.BoardId = model.BoardId;
+
+			await dbContext.SaveChangesAsync();
+		}
+
 		public async Task<TaskDetailsViewModel> GetForDetailsByIdAsync(string id)
 		{
 			TaskDetailsViewModel viewModel = await dbContext

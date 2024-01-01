@@ -82,5 +82,27 @@ namespace TaskBoardApp.Controllers
 			return View(modelForm);
 		}
 
+		[HttpPost]
+		public async Task<IActionResult> Edit(string id, TaskFormModel taskModel)
+		{
+			if (!ModelState.IsValid)
+			{
+				taskModel.AllBoards = await boardService.AllForSelectAsync();
+				return View(taskModel);
+			}
+
+			bool doesBoardExist = await boardService.ExistsByIdAsync(taskModel.BoardId);
+			if (!doesBoardExist)
+			{
+				ModelState.AddModelError(nameof(taskModel.BoardId), "Selected board does not exist!");
+				taskModel.AllBoards = await boardService.AllForSelectAsync();
+				return View(taskModel);
+			}
+
+			TaskEditGetViewModel model = await taskService.GetForEditByIdAsync(id);
+
+			await taskService.EditAsync(model, taskModel);
+			return RedirectToAction("All", "Board");
+		}
 	}
 }
