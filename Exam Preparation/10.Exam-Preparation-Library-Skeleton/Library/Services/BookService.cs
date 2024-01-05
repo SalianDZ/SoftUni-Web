@@ -2,7 +2,7 @@
 using Library.Data;
 using Library.Data.Models;
 using Library.Models.Book;
-using Microsoft.AspNetCore.Identity;
+using Library.Models.Category;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Services
@@ -15,6 +15,22 @@ namespace Library.Services
         {
 			context = dbContext;
         }
+
+		public async Task AddBookAsync(AddBookViewModel model)
+		{
+			Book book = new Book()
+			{
+				Title = model.Title,
+				Author = model.Author,
+				ImageUrl = model.Url,
+				Description = model.Description,
+				CategoryId = model.CategoryId,
+				Rating = Decimal.Parse(model.Rating)
+			};
+
+			await context.Books.AddAsync(book);
+			await context.SaveChangesAsync();
+		}
 
 		public async Task AddBookToCollectionAsync(string userId, BookViewModel book)
 		{
@@ -78,6 +94,23 @@ namespace Library.Services
 					ImageUrl = book.Book.ImageUrl,
 					Category = book.Book.Category.Name
 				}).ToListAsync();
+		}
+
+		public async Task<AddBookViewModel> GetNewAddBookModelAsync()
+		{
+			var categories = await context.Categories
+				.Select(c => new CategoryViewModel()
+				{
+					Id = c.Id,
+					Name = c.Name
+				}).ToListAsync();
+
+			AddBookViewModel bookViewModel = new AddBookViewModel()
+			{
+				Categories = categories
+			};
+
+			return bookViewModel;
 		}
 
 		public async Task RemoveBookFromCollection(string userId, BookViewModel book)
