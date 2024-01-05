@@ -4,8 +4,9 @@ using static SoftUniBazar.Common.EntityValidations.AdValidations;
 
 namespace SoftUniBazar.Models.Ad
 {
-	public class AddAdViewModel
+	public class EditAdViewModel
 	{
+
 		[Required]
 		[StringLength(NameMaxLength, MinimumLength = NameMinLength)]
 		public string Name { get; set; } = null!;
@@ -19,10 +20,13 @@ namespace SoftUniBazar.Models.Ad
 		public decimal Price { get; set; }
 
 		[Required]
-		public string ImageUrl { get; set; } = null!;
+		public string Owner { get; set; } = null!;
 
 		[Required]
-		public DateTime CreatedOn { get; set; }
+		public string OwnerId { get; set; } = null!;
+
+		[Required]
+		public string ImageUrl { get; set; } = null!;
 
 		[Required]
 		[Range(1, int.MaxValue)]
