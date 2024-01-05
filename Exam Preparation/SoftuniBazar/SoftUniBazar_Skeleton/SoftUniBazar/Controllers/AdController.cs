@@ -2,6 +2,7 @@
 using SoftUniBazar.Data.Models;
 using SoftUniBazar.Models.Ad;
 using SoftUniBazar.Services.Interfaces;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SoftUniBazar.Controllers
 {
@@ -91,6 +92,24 @@ namespace SoftUniBazar.Controllers
 			await adService.EditModel(viewModel, id);
 
 			return RedirectToAction("All", "Ad");
+		}
+
+		public async Task<IActionResult> AddToCart(int id)
+		{
+			if (!adService.DoesAdExist(id))
+			{
+				return BadRequest();
+			}
+
+			string currentUser = GetUserId();
+
+			if (adService.AdAlreadyExist(id, currentUser))
+			{
+				return RedirectToAction("All", "Ad");
+			}
+
+			await adService.AddAdToCollection(id, currentUser);
+			return RedirectToAction("Cart", "Ad");
 		}
 	}
 }

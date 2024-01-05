@@ -106,18 +106,18 @@ namespace SoftUniBazar.Services
 
 		public async Task<IEnumerable<AllAdsViewModel>> MineAds(string userId)
 		{
-			return await context.Ads
-				.Where(a => a.OwnerId == userId)
+			return await context.AdsBuyers
+				.Where(a => a.BuyerId == userId)
 				.Select(ad => new AllAdsViewModel
 				{
-					Id = ad.Id,
-					Name = ad.Name,
-					Description = ad.Description,
-					ImageUrl = ad.ImageUrl,
-					Category = ad.Category.Name,
-					Price = ad.Price,
-					Owner = ad.Owner.UserName,
-					CreatedOn = ad.CreatedOn.ToString("yyyy-MM-dd H:mm")
+					Id = ad.Ad.Id,
+					Name = ad.Ad.Name,
+					Description = ad.Ad.Description,
+					ImageUrl = ad.Ad.ImageUrl,
+					Category = ad.Ad.Category.Name,
+					Price = ad.Ad.Price,
+					Owner = ad.Ad.Owner.UserName,
+					CreatedOn = ad.Ad.CreatedOn.ToString("yyyy-MM-dd H:mm")
 				})
 				.ToListAsync();
 		}
@@ -133,6 +133,23 @@ namespace SoftUniBazar.Services
 			ad.CategoryId = model.CategoryId;
 
 			await context.SaveChangesAsync();
+		}
+
+		public async Task AddAdToCollection(int adId, string userId)
+		{
+			AdBuyer adBuyer = new AdBuyer()
+			{ 
+				AdId = adId,
+				BuyerId = userId
+			};
+
+			await context.AdsBuyers.AddAsync(adBuyer);
+			await context.SaveChangesAsync();
+		}
+
+		public bool AdAlreadyExist(int adId, string userId)
+		{
+			return context.AdsBuyers.Any(ab => ab.AdId == adId && ab.BuyerId == userId);
 		}
 	}
 }

@@ -12,8 +12,13 @@ namespace SoftUniBazar.Services.Interfaces
 
 		bool DoesCategoryExist(int categoryId);
 
+		bool DoesAdExist(int adId);
+
 		Task<EditAdViewModel?> GetModelForEdit(int adId);
 
 		Task EditModel(EditAdViewModel model, int adId);
+
+		Task AddAdToCollection(int adId, string userId);
+		bool AdAlreadyExist(int adId, string userId);
 	}
 }
