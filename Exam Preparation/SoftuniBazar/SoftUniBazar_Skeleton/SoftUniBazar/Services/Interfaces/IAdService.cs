@@ -4,6 +4,9 @@ namespace SoftUniBazar.Services.Interfaces
 {
 	public interface IAdService
 	{
-		public Task<IEnumerable<AllAdsViewModel>> AllAds();
+		Task<IEnumerable<AllAdsViewModel>> AllAds();
+		Task<IEnumerable<AllAdsViewModel>> MineAds(string userId);
+
+		Task<AddAdViewModel> AddOnHttpGet();
 	}
 }
