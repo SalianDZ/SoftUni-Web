@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SoftUniBazar.Data;
+using SoftUniBazar.Services;
+using SoftUniBazar.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 	options.Password.RequireNonAlphanumeric = false;
 	options.Password.RequireUppercase = false;
 });
+
+builder.Services.AddScoped<IAdService, AdService>();
 
 builder.Services.AddControllersWithViews();
 
