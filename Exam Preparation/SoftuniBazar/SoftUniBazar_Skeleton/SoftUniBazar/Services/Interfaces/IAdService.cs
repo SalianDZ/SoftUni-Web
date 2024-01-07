@@ -20,5 +20,6 @@ namespace SoftUniBazar.Services.Interfaces
 
 		Task AddAdToCollection(int adId, string userId);
 		bool AdAlreadyExist(int adId, string userId);
+		Task RemoveFromCollection(int id, string currentUser);
 	}
 }

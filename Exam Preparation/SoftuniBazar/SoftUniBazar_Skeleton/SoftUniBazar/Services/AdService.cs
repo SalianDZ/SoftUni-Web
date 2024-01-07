@@ -151,5 +151,15 @@ namespace SoftUniBazar.Services
 		{
 			return context.AdsBuyers.Any(ab => ab.AdId == adId && ab.BuyerId == userId);
 		}
+
+		public async Task RemoveFromCollection(int id, string currentUser)
+		{
+			context.AdsBuyers.Remove(new AdBuyer()
+			{ 
+				AdId = id,
+				BuyerId = currentUser
+			});
+			await context.SaveChangesAsync();
+		}
 	}
 }
