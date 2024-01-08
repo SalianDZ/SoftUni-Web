@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Homies.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Type = Homies.Data.Models.Type;
 
 namespace Homies.Data
 {
@@ -9,32 +11,56 @@ namespace Homies.Data
             : base(options)
         {
         }
+
+		public DbSet<Event> Events { get; set; } = null!;
+
+		public DbSet<Type> Types { get; set; } = null!;
+
+        public DbSet<EventParticipant> EventsParticipants { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder
-            //    .Entity<Type>()
-            //    .HasData(new Type()
-            //    {
-            //        Id = 1,
-            //        Name = "Animals"
-            //    },
-            //    new Type()
-            //    {
-            //        Id = 2,
-            //        Name = "Fun"
-            //    },
-            //    new Type()
-            //    {
-            //        Id = 3,
-            //        Name = "Discussion"
-            //    },
-            //    new Type()
-            //    {
-            //        Id = 4,
-            //        Name = "Work"
-            //    });
+            modelBuilder
+                .Entity<EventParticipant>()
+                .HasKey(x => new { x.EventId, x.HelperId });
 
-            //base.OnModelCreating(modelBuilder);
-        }
+			modelBuilder.Entity<EventParticipant>()
+				.HasOne(e => e.Helper)
+				.WithMany()
+				.HasForeignKey(e => e.HelperId)
+				.OnDelete(DeleteBehavior.NoAction);
+
+			modelBuilder.Entity<EventParticipant>()
+				.HasOne(e => e.Event)
+				.WithMany()
+				.HasForeignKey(e => e.EventId)
+				.OnDelete(DeleteBehavior.NoAction);
+
+
+			modelBuilder
+				.Entity<Type>()
+				.HasData(new Type()
+				{
+					Id = 1,
+					Name = "Animals"
+				},
+				new Type()
+				{
+					Id = 2,
+					Name = "Fun"
+				},
+				new Type()
+				{
+					Id = 3,
+					Name = "Discussion"
+				},
+				new Type()
+				{
+					Id = 4,
+					Name = "Work"
+				});
+
+			base.OnModelCreating(modelBuilder);
+		}
     }
 }
