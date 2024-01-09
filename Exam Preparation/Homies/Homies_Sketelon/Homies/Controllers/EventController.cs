@@ -120,5 +120,17 @@ namespace Homies.Controllers
 
 			return RedirectToAction("Joined", "Event");
 		}
+
+		public async Task<IActionResult> Details(int id)
+		{
+			if (!eventService.DoesExist(id))
+			{
+				return BadRequest();
+			}
+
+			EventDetailsViewModel model = await eventService.GetEventDetails(id);
+
+			return View(model);
+		}
 	}
 }

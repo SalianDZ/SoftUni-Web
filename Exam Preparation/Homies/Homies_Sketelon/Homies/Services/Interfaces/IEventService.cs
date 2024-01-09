@@ -1,5 +1,6 @@
 ﻿using Homies.Models.Event;
 using Homies.Models.Type;
+using System.Runtime.CompilerServices;
 
 namespace Homies.Services.Interfaces
 {
@@ -26,5 +27,7 @@ namespace Homies.Services.Interfaces
 		Task AddEventToCollection(int id, string userId);
 
 		Task RemoveEventFromCollection(int id, string userId);
+
+		Task<EventDetailsViewModel> GetEventDetails(int id);
 	}
 }

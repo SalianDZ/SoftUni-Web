@@ -107,6 +107,25 @@ namespace Homies.Services
 			return model;
 		}
 
+		public async Task<EventDetailsViewModel> GetEventDetails(int id)
+		{
+			EventDetailsViewModel model = await context.Events
+				.Where(e => e.Id == id)
+				.Select(e => new EventDetailsViewModel
+				{
+					Id = e.Id,
+					Name = e.Name,
+					Description = e.Description,
+					Start = e.Start.ToString("yyyy-MM-dd H:mm"),
+					End = e.End.ToString("yyyy-MM-dd H:mm"),
+					CreatedOn = e.CreatedOn.ToString("yyyy-MM-dd H:mm"),
+					Organiser = e.Organiser.UserName,
+					Type = e.Type.Name
+				}).FirstAsync();
+
+			return model;
+		}
+
 		public async Task<IEnumerable<AllEventViewModel>> GetJoinedEventsAsync(string userId)
 		{
 			List<AllEventViewModel> models = await context.EventsParticipants
