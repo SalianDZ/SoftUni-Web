@@ -155,5 +155,17 @@ namespace Homies.Services
 		{
 			return context.EventsParticipants.Any(ep => ep.EventId == id && ep.HelperId == userId);
 		}
+
+		public async Task RemoveEventFromCollection(int id, string userId)
+		{
+			EventParticipant eventParticipant = new EventParticipant()
+			{
+				EventId = id,
+				HelperId = userId
+			};
+
+			context.EventsParticipants.Remove(eventParticipant);
+			await context.SaveChangesAsync();
+		}
 	}
 }

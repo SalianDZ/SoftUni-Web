@@ -99,7 +99,24 @@ namespace Homies.Controllers
 				return RedirectToAction("All", "Event");
 			}
 
-			await eventService.AddEventToCollection(id, GetUserId());
+			await eventService.RemoveEventFromCollection(id, GetUserId());
+
+			return RedirectToAction("Joined", "Event");
+		}
+
+		public async Task<IActionResult> Leave(int id)
+		{
+			if (!eventService.DoesExist(id))
+			{
+				return BadRequest();
+			}
+
+			if (!eventService.IsAlreadyAdded(id, GetUserId()))
+			{
+				return RedirectToAction("All", "Event");
+			}
+
+			await eventService.RemoveEventFromCollection(id, GetUserId());
 
 			return RedirectToAction("Joined", "Event");
 		}

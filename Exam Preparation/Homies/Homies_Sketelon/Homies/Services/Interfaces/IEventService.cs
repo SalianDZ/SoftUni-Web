@@ -24,5 +24,7 @@ namespace Homies.Services.Interfaces
 		bool IsAlreadyAdded(int id, string userId);
 
 		Task AddEventToCollection(int id, string userId);
+
+		Task RemoveEventFromCollection(int id, string userId);
 	}
 }
