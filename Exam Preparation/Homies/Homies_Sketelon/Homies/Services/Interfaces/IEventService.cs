@@ -14,5 +14,9 @@ namespace Homies.Services.Interfaces
 		Task<List<TypeViewModel>> GetTypesAsync();
 
 		Task CreateEvent(AddEventViewModel model, string ownerId);
+
+		Task<EditEventViewModel> GetEventByIdAsync(int id);
+
+		Task EditEventAsync(int id, EditEventViewModel model);
 	}
 }

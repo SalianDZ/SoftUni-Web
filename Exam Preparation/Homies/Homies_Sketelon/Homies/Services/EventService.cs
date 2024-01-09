@@ -33,6 +33,22 @@ namespace Homies.Services
 			await context.SaveChangesAsync();
 		}
 
+		public async Task EditEventAsync(int id, EditEventViewModel model)
+		{
+			Event? wantedEvent = await context.Events.FirstOrDefaultAsync(e => e.Id == id);
+
+			if (wantedEvent != null) 
+			{
+				wantedEvent.Name = model.Name;
+				wantedEvent.Description = model.Description;
+				wantedEvent.Start = DateTime.Parse(model.Start);
+				wantedEvent.End = DateTime.Parse(model.End);
+				wantedEvent.TypeId = model.TypeId;
+
+				await context.SaveChangesAsync();
+			}
+		}
+
 		public async Task<IEnumerable<AllEventViewModel>> GetAllEventsAsync()
 		{
 			List<AllEventViewModel> models = await context.Events
@@ -47,6 +63,27 @@ namespace Homies.Services
 				.ToListAsync();
 
 			return models;
+		}
+
+		public async Task<EditEventViewModel> GetEventByIdAsync(int id)
+		{
+			List<TypeViewModel> types = await GetTypesAsync();
+
+			EditEventViewModel? model = await context.Events
+				.Where(e => e.Id == id)
+				.Select(x => new EditEventViewModel
+				{
+					Name = x.Name,
+					Description = x.Description,
+					OwnerId = x.OrganiserId,
+					Start = x.Start.ToString("yyyy-MM-dd H:mm"),
+					End = x.End.ToString("yyyy-MM-dd H:mm"),
+					CreatedOn = x.CreatedOn.ToString("yyyy-MM -dd H:mm"),
+					TypeId = x.TypeId,
+					Types = types
+				}).FirstOrDefaultAsync();
+
+			return model;
 		}
 
 		public async Task<IEnumerable<AllEventViewModel>> GetJoinedEventsAsync(string userId)

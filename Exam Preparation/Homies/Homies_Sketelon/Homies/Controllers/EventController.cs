@@ -52,5 +52,37 @@ namespace Homies.Controllers
 			await eventService.CreateEvent(model, GetUserId());
 			return RedirectToAction("All", "Event");
 		}
+
+		[HttpGet]
+		public async Task<IActionResult> Edit(int id)
+		{ 
+			var model = await eventService.GetEventByIdAsync(id);
+
+			if (model == null)
+			{
+				return BadRequest();
+			}
+
+			if (GetUserId() != model.OwnerId)
+			{
+				return Unauthorized();
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Edit(int id, EditEventViewModel model)
+		{
+			var types = await eventService.GetTypesAsync();
+			if (!types.Any(t => t.Id == model.TypeId))
+			{
+				ModelState.AddModelError(nameof(model.TypeId), "Type does not exist!");
+			}
+
+			await eventService.EditEventAsync(id, model);
+			
+			return RedirectToAction("All", "Event");
+		}
 	}
 }
