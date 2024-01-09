@@ -25,15 +25,15 @@ namespace Homies.Data
                 .HasKey(x => new { x.EventId, x.HelperId });
 
 			modelBuilder.Entity<EventParticipant>()
-				.HasOne(e => e.Helper)
-				.WithMany()
-				.HasForeignKey(e => e.HelperId)
+				.HasOne(e => e.Event)
+				.WithMany(e => e.EventsParticipants)
+				.HasForeignKey(e => e.EventId)
 				.OnDelete(DeleteBehavior.NoAction);
 
 			modelBuilder.Entity<EventParticipant>()
-				.HasOne(e => e.Event)
+				.HasOne(e => e.Helper)
 				.WithMany()
-				.HasForeignKey(e => e.EventId)
+				.HasForeignKey(e => e.HelperId)
 				.OnDelete(DeleteBehavior.NoAction);
 
 
