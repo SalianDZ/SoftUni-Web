@@ -2,6 +2,8 @@
 using Homies.Models.Type;
 using Homies.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NuGet.Frameworks;
 
 namespace Homies.Controllers
 {
@@ -83,6 +85,23 @@ namespace Homies.Controllers
 			await eventService.EditEventAsync(id, model);
 			
 			return RedirectToAction("All", "Event");
+		}
+
+		public async Task<IActionResult> Join(int id)
+		{
+			if (!eventService.DoesExist(id))
+			{
+				return BadRequest();
+			}
+
+			if (eventService.IsAlreadyAdded(id, GetUserId()))
+			{
+				return RedirectToAction("All", "Event");
+			}
+
+			await eventService.AddEventToCollection(id, GetUserId());
+
+			return RedirectToAction("Joined", "Event");
 		}
 	}
 }

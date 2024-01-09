@@ -18,5 +18,11 @@ namespace Homies.Services.Interfaces
 		Task<EditEventViewModel> GetEventByIdAsync(int id);
 
 		Task EditEventAsync(int id, EditEventViewModel model);
+
+		bool DoesExist(int id);
+
+		bool IsAlreadyAdded(int id, string userId);
+
+		Task AddEventToCollection(int id, string userId);
 	}
 }

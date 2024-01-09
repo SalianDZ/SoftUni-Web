@@ -16,6 +16,22 @@ namespace Homies.Services
 			this.context = context;
         }
 
+		public async Task AddEventToCollection(int id, string userId)
+		{
+
+			if (context.Events.First(x => x.Id == id).OrganiserId != userId)
+			{
+				EventParticipant eventParticipant = new EventParticipant()
+				{
+					EventId = id,
+					HelperId = userId
+				};
+
+				await context.EventsParticipants.AddAsync(eventParticipant);
+				await context.SaveChangesAsync();
+			}
+		}
+
 		public async Task CreateEvent(AddEventViewModel model, string ownerId)
 		{
 			Event newEvent = new Event()
@@ -31,6 +47,11 @@ namespace Homies.Services
 
 			await context.Events.AddAsync(newEvent);
 			await context.SaveChangesAsync();
+		}
+
+		public bool DoesExist(int id)
+		{
+			return context.Events.Any(e => e.Id == id);
 		}
 
 		public async Task EditEventAsync(int id, EditEventViewModel model)
@@ -128,6 +149,11 @@ namespace Homies.Services
 			}).ToListAsync();
 
 			return types;
+		}
+
+		public bool IsAlreadyAdded(int id, string userId)
+		{
+			return context.EventsParticipants.Any(ep => ep.EventId == id && ep.HelperId == userId);
 		}
 	}
 }
