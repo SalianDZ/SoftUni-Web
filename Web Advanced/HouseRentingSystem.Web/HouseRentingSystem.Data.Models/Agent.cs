@@ -9,6 +9,7 @@ namespace HouseRentingSystem.Data.Models
         public Agent()
         {
             OwnedHouses = new HashSet<House>();
+            Id = Guid.NewGuid();
         }
         public Guid Id { get; set; }
 

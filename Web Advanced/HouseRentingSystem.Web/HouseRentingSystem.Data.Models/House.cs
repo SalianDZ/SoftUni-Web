@@ -6,6 +6,11 @@ namespace HouseRentingSystem.Data.Models
 {
     public class House
     {
+        public House()
+        {
+            Id = Guid.NewGuid();
+        }
+
         public Guid Id { get; set; }
 
         [Required]

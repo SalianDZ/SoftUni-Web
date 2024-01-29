@@ -7,6 +7,7 @@ namespace HouseRentingSystem.Data.Models
         public ApplicationUser()
         {
             RentedHouse = new HashSet<House>();
+            Id = Guid.NewGuid();
         }
 
         public virtual ICollection<House> RentedHouse { get; set; }
