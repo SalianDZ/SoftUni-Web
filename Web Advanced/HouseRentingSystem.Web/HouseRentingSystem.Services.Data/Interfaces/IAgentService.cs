@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HouseRentingSystem.Web.ViewModels.Agent;
 
 namespace HouseRentingSystem.Services.Data.Interfaces
 {
-	internal interface IAgentService
+	public interface IAgentService
 	{
+		Task<bool> AgentExistByUserIdAsync(string userId);
+
+		Task<bool> AgentExistsByPhoneNumberAsync(string phoneNumber);
+
+		Task<bool> HasRentsByUserIdAsync(string userId);
+
+		Task Create(string userId, BecomeAgentFormModel model);
 	}
 }
