@@ -25,7 +25,20 @@ namespace HouseRentingSystem.Services.Data
             return result;
         }
 
-        public async Task Create(string userId, BecomeAgentFormModel model)
+		public async Task<string?> AgentIdByUserIdAsync(string userId)
+		{
+            Agent? agent = await dbContext.Agents
+                .FirstOrDefaultAsync(a => a.UserId.ToString() == userId);
+
+            if (agent == null)
+            {
+                return null;
+            }
+
+            return agent.Id.ToString();
+		}
+
+		public async Task Create(string userId, BecomeAgentFormModel model)
         {
             Agent agent = new Agent()
             {

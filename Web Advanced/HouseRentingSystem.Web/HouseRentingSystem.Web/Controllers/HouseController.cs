@@ -23,7 +23,7 @@ namespace HouseRentingSystem.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> All()
         {
-            return View();
+            return Ok();
         }
 
         [HttpGet]
@@ -45,5 +45,45 @@ namespace HouseRentingSystem.Web.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(HouseFormModel model)
+        {
+			string userId = User.GetId()!;
+			bool isAgent = await agentService.AgentExistByUserIdAsync(userId);
+
+			if (!isAgent)
+			{
+				TempData[ErrorMessage] = "You must become an agent in order to add new houses!";
+				return RedirectToAction("Become", "Agent");
+			}
+
+            bool categoryExists = await categoryService.ExistsByIdAsync(model.CategoryId);
+
+            if (!categoryExists) 
+            {
+                ModelState.AddModelError(nameof(model.CategoryId), "Selected category does not exist!");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.Categories = await categoryService.AllCategoriesAsync();
+                return View(model);
+            }
+
+            try
+            {
+                string? agentId = await agentService.AgentIdByUserIdAsync(userId);
+                await houseService.CreateAsync(model, agentId!);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(string.Empty, "Unexpected error occured while trying to add your new house. Please try again later!");
+				model.Categories = await categoryService.AllCategoriesAsync();
+				return View(model);
+            }
+
+            return RedirectToAction("All", "House");
+		}
     }
 }
