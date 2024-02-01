@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystem.Services.Data
 {
-    public class CategoryService : ICategoryService
+	public class CategoryService : ICategoryService
     {
         private readonly HouseRentingDbContext context;
 
@@ -26,6 +26,16 @@ namespace HouseRentingSystem.Services.Data
 
             return allCategories;
         }
+
+		public async Task<IEnumerable<string>> AllCategoryNamesAsync()
+		{
+			IEnumerable<string> allNames = await context
+                .Categories
+                .Select(c => c.Name)
+                .ToArrayAsync();
+
+            return allNames;
+		}
 
 		public async Task<bool> ExistsByIdAsync(int id)
 		{
