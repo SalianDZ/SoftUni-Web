@@ -33,6 +33,8 @@ namespace HouseRentingSystem.Data.Models
 
         public DateTime CreatedOn { get; set; }
 
+        public bool IsActive { get; set; }
+
         public int CategoryId { get; set; }
 
         [ForeignKey(nameof(CategoryId))]
