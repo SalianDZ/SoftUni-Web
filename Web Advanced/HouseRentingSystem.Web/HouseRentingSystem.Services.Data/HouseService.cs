@@ -76,6 +76,42 @@ namespace HouseRentingSystem.Services.Data
             };
         }
 
+		public async Task<IEnumerable<HouseAllViewModel>> AllByAgentIdAsync(string agentId)
+		{
+            IEnumerable<HouseAllViewModel> agentHouses =
+                await dbContext.Houses
+                .Where(h => h.AgentId.ToString() == agentId && h.IsActive)
+                .Select(h => new HouseAllViewModel
+                {
+                    Id = h.Id.ToString(),
+                    Title = h.Title,
+                    Address = h.Address,
+                    ImageUrl = h.ImageUrl,
+                    PricePerMonth = h.PricePerMonth,
+                    IsRented = h.RenterId.HasValue
+                }).ToArrayAsync();
+
+            return agentHouses;
+		}
+
+		public async Task<IEnumerable<HouseAllViewModel>> AllByUserIdAsync(string userId)
+		{
+			IEnumerable<HouseAllViewModel> userHouses =
+				await dbContext.Houses
+				.Where(h => h.RenterId.HasValue && h.RenterId.ToString() == userId && h.IsActive)
+				.Select(h => new HouseAllViewModel
+				{
+					Id = h.Id.ToString(),
+					Title = h.Title,
+					Address = h.Address,
+					ImageUrl = h.ImageUrl,
+					PricePerMonth = h.PricePerMonth,
+					IsRented = h.RenterId.HasValue
+				}).ToArrayAsync();
+
+            return userHouses;
+		}
+
 		public async Task CreateAsync(HouseFormModel formModel, string agentId)
 		{
             House house = new House()
