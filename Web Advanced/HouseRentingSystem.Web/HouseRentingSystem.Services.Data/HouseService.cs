@@ -2,10 +2,12 @@
 using HouseRentingSystem.Data.Models;
 using HouseRentingSystem.Services.Data.Interfaces;
 using HouseRentingSystem.Services.Data.Models.House;
+using HouseRentingSystem.Web.ViewModels.Agent;
 using HouseRentingSystem.Web.ViewModels.Home;
 using HouseRentingSystem.Web.ViewModels.House;
 using HouseRentingSystem.Web.ViewModels.House.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace HouseRentingSystem.Services.Data
 {
@@ -127,6 +129,30 @@ namespace HouseRentingSystem.Services.Data
 
             await dbContext.Houses.AddAsync(house);
             await dbContext.SaveChangesAsync();
+		}
+
+		public async Task<HouseDetailsViewModel?> GetDetailsByIdAsync(string houseId)
+		{
+			HouseDetailsViewModel? viewModel = await dbContext.Houses.Include(h => h.Category).Include(h => h.Agent).ThenInclude(a => a.User)
+                .Where(h => h.Id.ToString() == houseId)
+                .Select(h => new HouseDetailsViewModel
+                {
+                    Id = h.Id.ToString(),
+                    Title = h.Title,
+                    Address = h.Address,
+                    Description = h.Description,
+                    PricePerMonth = h.PricePerMonth,
+                    ImageUrl = h.ImageUrl,
+                    IsRented = h.RenterId.HasValue,
+                    Category = h.Category.Name,
+                    Agent = new AgentInfoOnHouseViewModel()
+                    { 
+                        Email = h.Agent.User.Email,
+                        PhoneNumber = h.Agent.PhoneNumber
+                    }
+                }).FirstOrDefaultAsync();
+
+            return viewModel;
 		}
 
 		public async Task<IEnumerable<IndexViewModel>> LastFreeHousesAsync()

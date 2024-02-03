@@ -93,6 +93,7 @@ namespace HouseRentingSystem.Web.Controllers
             return RedirectToAction("All", "House");
 		}
 
+        [HttpGet]
         public async Task<IActionResult> Mine()
         {
             List<HouseAllViewModel> myHouses = new List<HouseAllViewModel>();
@@ -111,6 +112,22 @@ namespace HouseRentingSystem.Web.Controllers
             }
 
             return View(myHouses);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(string id)
+        { 
+            HouseDetailsViewModel? viewModel = await houseService
+                .GetDetailsByIdAsync(id);
+
+            if (viewModel == null)
+            {
+                TempData[ErrorMessage] = "This house does not exist!";
+                return RedirectToAction("All", "House");
+            }
+
+            return View(viewModel);
         }
     }
 }
