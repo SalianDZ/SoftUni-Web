@@ -130,6 +130,20 @@ namespace HouseRentingSystem.Services.Data
             await dbContext.SaveChangesAsync();
 		}
 
+		public async Task EditHouseAsync(string id, HouseFormModel formModel)
+		{
+            House house = await dbContext.Houses.Where(h => h.IsActive).FirstAsync(h => h.Id.ToString() == id);
+
+            house.Title = formModel.Title;
+            house.Address = formModel.Address;
+            house.Description = formModel.Description;
+            house.PricePerMonth = formModel.PricePerMonth;
+            house.ImageUrl = formModel.ImageUrl;
+            house.CategoryId = formModel.CategoryId;
+
+            await dbContext.SaveChangesAsync();
+		}
+
 		public async Task<bool> ExistsByIdAsync(string houseId)
 		{
             bool result = 
@@ -177,6 +191,12 @@ namespace HouseRentingSystem.Services.Data
                 PricePerMonth= house.PricePerMonth,
                 CategoryId = house.CategoryId
             };
+		}
+
+		public async Task<bool> IsAgentWithIdOwnerOfHouseWithIdAsync(string houseId, string agentId)
+		{
+            House house = await dbContext.Houses.Where(h => h.IsActive).FirstAsync(h => h.Id.ToString() == houseId);
+            return house.AgentId.ToString() == agentId;
 		}
 
 		public async Task<IEnumerable<IndexViewModel>> LastFreeHousesAsync()
