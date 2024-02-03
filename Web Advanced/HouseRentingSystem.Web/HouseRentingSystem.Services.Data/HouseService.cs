@@ -7,7 +7,6 @@ using HouseRentingSystem.Web.ViewModels.Home;
 using HouseRentingSystem.Web.ViewModels.House;
 using HouseRentingSystem.Web.ViewModels.House.Enums;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace HouseRentingSystem.Services.Data
 {
@@ -131,7 +130,17 @@ namespace HouseRentingSystem.Services.Data
             await dbContext.SaveChangesAsync();
 		}
 
-		public async Task<HouseDetailsViewModel?> GetDetailsByIdAsync(string houseId)
+		public async Task<bool> ExistsByIdAsync(string houseId)
+		{
+            bool result = 
+                await dbContext
+                .Houses
+                .Where(h => h.IsActive)
+                .AnyAsync(h => h.Id.ToString() == houseId);
+            return result;
+		}
+
+		public async Task<HouseDetailsViewModel> GetDetailsByIdAsync(string houseId)
 		{
 			HouseDetailsViewModel? viewModel = await dbContext.Houses.Include(h => h.Category).Include(h => h.Agent).ThenInclude(a => a.User)
                 .Where(h => h.Id.ToString() == houseId)
@@ -150,9 +159,24 @@ namespace HouseRentingSystem.Services.Data
                         Email = h.Agent.User.Email,
                         PhoneNumber = h.Agent.PhoneNumber
                     }
-                }).FirstOrDefaultAsync();
+                }).FirstAsync();
 
             return viewModel;
+		}
+
+		public async Task<HouseFormModel> GetHouseForEditByIdAsync(string houseId)
+		{
+            House house = await dbContext.Houses.Include(h => h.Category).Where(h => h.Id.ToString() == houseId).FirstAsync();
+
+            return new HouseFormModel
+            { 
+                Title = house.Title,
+                Address = house.Address,
+                Description = house.Description,
+                ImageUrl= house.ImageUrl,
+                PricePerMonth= house.PricePerMonth,
+                CategoryId = house.CategoryId
+            };
 		}
 
 		public async Task<IEnumerable<IndexViewModel>> LastFreeHousesAsync()

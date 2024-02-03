@@ -16,6 +16,10 @@ namespace HouseRentingSystem.Services.Data.Interfaces
 
         Task<IEnumerable<HouseAllViewModel>> AllByUserIdAsync(string userId);
 
-        Task<HouseDetailsViewModel?> GetDetailsByIdAsync(string houseId);
+        Task<HouseDetailsViewModel> GetDetailsByIdAsync(string houseId);
+
+        Task<bool> ExistsByIdAsync(string houseId);
+
+        Task<HouseFormModel> GetHouseForEditByIdAsync(string houseId);
     }
 }
