@@ -113,7 +113,7 @@ namespace HouseRentingSystem.Services.Data
             return userHouses;
 		}
 
-		public async Task CreateAsync(HouseFormModel formModel, string agentId)
+		public async Task<string> CreateAndReturnIdAsync(HouseFormModel formModel, string agentId)
 		{
             House house = new House()
             { 
@@ -128,6 +128,7 @@ namespace HouseRentingSystem.Services.Data
 
             await dbContext.Houses.AddAsync(house);
             await dbContext.SaveChangesAsync();
+            return house.Id.ToString();
 		}
 
 		public async Task EditHouseAsync(string id, HouseFormModel formModel)

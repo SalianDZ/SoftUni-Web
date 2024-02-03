@@ -86,19 +86,19 @@ namespace HouseRentingSystem.Web.Controllers
                 return View(model);
             }
 
+            
             try
             {
-                string? agentId = await agentService.AgentIdByUserIdAsync(userId);
-                await houseService.CreateAsync(model, agentId!);
-            }
+				string? agentId = await agentService.AgentIdByUserIdAsync(userId);
+                string houseId = await houseService.CreateAndReturnIdAsync(model, agentId!);
+				return RedirectToAction("Details", "House", new { id = houseId });
+			}
             catch (Exception)
             {
                 ModelState.AddModelError(string.Empty, "Unexpected error occured while trying to add your new house. Please try again later!");
 				model.Categories = await categoryService.AllCategoriesAsync();
 				return View(model);
             }
-
-            return RedirectToAction("All", "House");
 		}
 
         [HttpGet]
