@@ -131,6 +131,16 @@ namespace HouseRentingSystem.Services.Data
             return house.Id.ToString();
 		}
 
+		public async Task DeleteHouseByIdAsync(string houseId)
+		{
+            House house = await dbContext.Houses
+                .Where(h => h.IsActive)
+                .FirstAsync(h => h.Id.ToString() == houseId);
+
+            house.IsActive = false;
+            await dbContext.SaveChangesAsync();
+		}
+
 		public async Task EditHouseAsync(string id, HouseFormModel formModel)
 		{
             House house = await dbContext.Houses.Where(h => h.IsActive).FirstAsync(h => h.Id.ToString() == id);
@@ -179,6 +189,19 @@ namespace HouseRentingSystem.Services.Data
             return viewModel;
 		}
 
+		public async Task<HousePreDeleteDetailsViewModel> GetHouseForDeleteByIdAsync(string houseId)
+		{
+            HousePreDeleteDetailsViewModel model = await dbContext.Houses
+                .Where (h => h.Id.ToString() == houseId && h.Id.ToString() == houseId)
+                .Select(h => new HousePreDeleteDetailsViewModel
+                {
+                    Title = h.Title,
+                    Address = h.Address,
+                    ImageUrl = h.ImageUrl
+                }).FirstAsync();
+
+            return model;
+		}
 		public async Task<HouseFormModel> GetHouseForEditByIdAsync(string houseId)
 		{
             House house = await dbContext.Houses.Include(h => h.Category).Where(h => h.Id.ToString() == houseId).FirstAsync();

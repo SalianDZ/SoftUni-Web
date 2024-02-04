@@ -239,5 +239,84 @@ namespace HouseRentingSystem.Web.Controllers
 
             return RedirectToAction("Details", "House", new { id});
 		}
+
+        public async Task<IActionResult> Delete(string id)
+        {
+			bool houseExists = await houseService.ExistsByIdAsync(id);
+			if (!houseExists)
+			{
+				TempData[ErrorMessage] = "This house does not exist!";
+				return RedirectToAction("Mine", "House");
+			}
+
+			bool isUserAgent = await agentService.AgentExistByUserIdAsync(User.GetId()!);
+
+			if (!isUserAgent)
+			{
+				TempData["ErrorMessage"] = "You must become an agent in order to delete this house!";
+				return RedirectToAction("Become", "Agent");
+			}
+
+			string? agentId = await agentService.AgentIdByUserIdAsync(User.GetId()!);
+			bool isAgentOwner = await houseService.IsAgentWithIdOwnerOfHouseWithIdAsync(id, agentId!);
+
+			if (!isAgentOwner)
+			{
+				TempData[ErrorMessage] = "You must be the agent owner of the house you want to delete!";
+				return RedirectToAction("Mine", "House");
+			}
+
+			try
+			{
+				HousePreDeleteDetailsViewModel viewModel = await houseService.GetHouseForDeleteByIdAsync(id);
+                return View(viewModel); 
+			}
+			catch (Exception)
+			{
+				ModelState.AddModelError(string.Empty, "Unexpected error occured while trying to delete the house. Please try again later!");
+                return RedirectToAction("Mine", "House");
+			}
+
+		}
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id, HousePreDeleteDetailsViewModel model)
+        {
+			bool houseExists = await houseService.ExistsByIdAsync(id);
+			if (!houseExists)
+			{
+				TempData[ErrorMessage] = "This house does not exist!";
+				return RedirectToAction("Mine", "House");
+			}
+
+			bool isUserAgent = await agentService.AgentExistByUserIdAsync(User.GetId()!);
+
+			if (!isUserAgent)
+			{
+				TempData["ErrorMessage"] = "You must become an agent in order to delete this house!";
+				return RedirectToAction("Become", "Agent");
+			}
+
+			string? agentId = await agentService.AgentIdByUserIdAsync(User.GetId()!);
+			bool isAgentOwner = await houseService.IsAgentWithIdOwnerOfHouseWithIdAsync(id, agentId!);
+
+			if (!isAgentOwner)
+			{
+				TempData[ErrorMessage] = "You must be the agent owner of the house you want to delete!";
+				return RedirectToAction("Mine", "House");
+			}
+
+			try
+			{
+				await houseService.DeleteHouseByIdAsync(id);
+				TempData["WarningMessage"] = "The house was succcessfully deleted!";
+				return RedirectToAction("Mine", "House");
+			}
+			catch (Exception)
+			{
+				ModelState.AddModelError(string.Empty, "Unexpected error occured while trying to delete the house. Please try again later!");
+				return RedirectToAction("All", "House");
+			}
+		}
 	}
 }

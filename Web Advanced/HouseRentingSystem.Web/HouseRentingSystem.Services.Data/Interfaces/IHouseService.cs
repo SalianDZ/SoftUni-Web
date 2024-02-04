@@ -25,5 +25,9 @@ namespace HouseRentingSystem.Services.Data.Interfaces
         Task<bool> IsAgentWithIdOwnerOfHouseWithIdAsync(string houseId, string agentId);
 
         Task EditHouseAsync(string id, HouseFormModel formModel);
+
+        Task<HousePreDeleteDetailsViewModel> GetHouseForDeleteByIdAsync(string houseId);
+
+        Task DeleteHouseByIdAsync(string houseId);
     }
 }
