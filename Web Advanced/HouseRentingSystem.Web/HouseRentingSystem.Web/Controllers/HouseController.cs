@@ -4,6 +4,7 @@ using HouseRentingSystem.Web.Infrastructure.Extensions;
 using HouseRentingSystem.Web.ViewModels.House;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata;
 using static HouseRentingSystem.Common.NotificationMessagesConstants;
 
 namespace HouseRentingSystem.Web.Controllers
@@ -316,6 +317,82 @@ namespace HouseRentingSystem.Web.Controllers
 			{
 				ModelState.AddModelError(string.Empty, "Unexpected error occured while trying to delete the house. Please try again later!");
 				return RedirectToAction("All", "House");
+			}
+		}
+
+		public async Task<IActionResult> Rent(string id)
+		{
+			bool houseExists = await houseService.ExistsByIdAsync(id);
+
+			if (!houseExists)
+			{
+				TempData[ErrorMessage] = "House with the provided id does not exist!";
+				return RedirectToAction("All", "House");
+			}
+
+			bool isHouseRented = await houseService.IsRentedByIdAsync(id);
+
+			if (isHouseRented)
+			{
+				TempData[ErrorMessage] = "House with the provided id has already been rented!";
+				return RedirectToAction("All", "House");
+			}
+
+			bool isUserAgent = await agentService.AgentExistByUserIdAsync(User.GetId()!);
+
+			if (isUserAgent)
+			{
+				TempData[ErrorMessage] = "Agents cannot rent houses! You need to be a user in order to rent houses!";
+				return RedirectToAction("Index", "Home");
+			}
+
+			try
+			{
+				await houseService.RentHouseAsync(id, User.GetId()!);
+				return RedirectToAction("Mine", "House");
+			}
+			catch (Exception)
+			{
+				TempData[ErrorMessage] = "Unexpected error occured while trying to rent the house. Please try again later!";
+				return RedirectToAction("All", "House");
+			}
+		}
+
+		public async Task<IActionResult> Leave(string id)
+		{
+			bool houseExists = await houseService.ExistsByIdAsync(id);
+
+			if (!houseExists)
+			{
+				TempData[ErrorMessage] = "House with the provided id does not exist!";
+				return RedirectToAction("All", "House");
+			}
+
+			bool isHouseRented = await houseService.IsRentedByIdAsync(id);
+
+			if (!isHouseRented)
+			{
+				TempData[ErrorMessage] = "House with the provided id is not rented by you!";
+				return RedirectToAction("Mine", "House");
+			}
+
+			bool isCurrentUserRenterOfTheHouse = await houseService.IsRentedByUserWithIdAsync(id, User.GetId()!);
+
+			if (!isCurrentUserRenterOfTheHouse)
+			{
+				TempData[ErrorMessage] = "You must be the renter of the house in order to leave it!";
+				return RedirectToAction("Mine", "House");
+			}
+
+			try
+			{
+				await houseService.LeaveHouseAsync(id);
+				return RedirectToAction("Mine", "House");
+			}
+			catch (Exception)
+			{
+				TempData[ErrorMessage] = "Unexpected error occured while trying to leave the house. Please try again later!";
+				return RedirectToAction("Mine", "House");
 			}
 		}
 	}

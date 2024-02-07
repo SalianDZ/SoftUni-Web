@@ -1,6 +1,8 @@
 ﻿using HouseRentingSystem.Services.Data.Models.House;
 using HouseRentingSystem.Web.ViewModels.Home;
 using HouseRentingSystem.Web.ViewModels.House;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Reflection.Metadata;
 
 namespace HouseRentingSystem.Services.Data.Interfaces
 {
@@ -29,5 +31,13 @@ namespace HouseRentingSystem.Services.Data.Interfaces
         Task<HousePreDeleteDetailsViewModel> GetHouseForDeleteByIdAsync(string houseId);
 
         Task DeleteHouseByIdAsync(string houseId);
+
+        Task<bool> IsRentedByIdAsync(string houseId);
+
+        Task RentHouseAsync(string houseId, string userId);
+
+        Task<bool> IsRentedByUserWithIdAsync(string houseId, string userId);
+
+        Task LeaveHouseAsync(string houseId);
     }
 }
