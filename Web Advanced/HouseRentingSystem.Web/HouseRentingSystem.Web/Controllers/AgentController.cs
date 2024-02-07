@@ -21,7 +21,7 @@ namespace HouseRentingSystem.Web.Controllers
 		public async Task<IActionResult> Become()
         {
             string? userId = User.GetId();
-            bool isAgent = await agentService.AgentExistByUserIdAsync(userId);
+            bool isAgent = await agentService.AgentExistByUserIdAsync(userId!);
 
             if (isAgent)
             {
@@ -36,7 +36,7 @@ namespace HouseRentingSystem.Web.Controllers
         public async Task<IActionResult> Become(BecomeAgentFormModel model)
         {
             string? userId = User.GetId();
-            bool isAgent = await agentService.AgentExistByUserIdAsync(userId);
+            bool isAgent = await agentService.AgentExistByUserIdAsync(userId!);
 
             if (isAgent)
             {
