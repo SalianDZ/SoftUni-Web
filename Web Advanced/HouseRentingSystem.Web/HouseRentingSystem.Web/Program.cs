@@ -4,6 +4,7 @@ using HouseRentingSystem.Services.Data.Interfaces;
 using HouseRentingSystem.Web.Infrastructure.Extensions;
 using HouseRentingSystem.Web.Infrastructure.ModelBinders;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystem.Web
@@ -34,6 +35,7 @@ namespace HouseRentingSystem.Web
                 .AddMvcOptions(options =>
                 {
                     options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+                    options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
                 });
 
             var app = builder.Build();

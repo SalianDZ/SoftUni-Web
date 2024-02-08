@@ -50,6 +50,20 @@ namespace HouseRentingSystem.Services.Data
             await dbContext.SaveChangesAsync();
         }
 
+        public async Task<bool> HasHouseWithIdAsync(string? houseId, string userId)
+        {
+            Agent? agent = await dbContext.Agents
+                .Include(a => a.OwnedHouses)
+                .FirstOrDefaultAsync(a => a.UserId.ToString() == userId);
+
+            if (agent == null)
+            {
+                return false;
+            }
+            houseId = houseId.ToLower();
+            return agent.OwnedHouses.Any(h => h.Id.ToString() == houseId);
+        }
+
         public async Task<bool> HasRentsByUserIdAsync(string userId)
         {
             ApplicationUser? user = await dbContext.Users

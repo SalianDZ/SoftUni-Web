@@ -2,12 +2,10 @@
 using HouseRentingSystem.Services.Data.Models.Statistics;
 using HouseRentingSystem.Web.ViewModels.Home;
 using HouseRentingSystem.Web.ViewModels.House;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System.Reflection.Metadata;
 
 namespace HouseRentingSystem.Services.Data.Interfaces
 {
-    public interface IHouseService
+	public interface IHouseService
     {
         Task<IEnumerable<IndexViewModel>> LastFreeHousesAsync();
 
