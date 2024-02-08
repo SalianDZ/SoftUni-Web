@@ -2,6 +2,7 @@
 using HouseRentingSystem.Data.Models;
 using HouseRentingSystem.Services.Data.Interfaces;
 using HouseRentingSystem.Services.Data.Models.House;
+using HouseRentingSystem.Services.Data.Models.Statistics;
 using HouseRentingSystem.Web.ViewModels.Agent;
 using HouseRentingSystem.Web.ViewModels.Home;
 using HouseRentingSystem.Web.ViewModels.House;
@@ -214,6 +215,15 @@ namespace HouseRentingSystem.Services.Data
                 ImageUrl= house.ImageUrl,
                 PricePerMonth= house.PricePerMonth,
                 CategoryId = house.CategoryId
+            };
+		}
+
+		public async Task<StatisticsServiceModel> GetStatisticsAsync()
+		{
+            return new StatisticsServiceModel()
+            {
+                TotalHouses = await dbContext.Houses.CountAsync(),
+                TotalRents = await dbContext.Houses.Where(h => h.RenterId.HasValue).CountAsync()
             };
 		}
 
