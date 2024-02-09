@@ -1,4 +1,5 @@
 ﻿using HouseRentingSystem.Data;
+using HouseRentingSystem.Data.Models;
 using HouseRentingSystem.Services.Data.Interfaces;
 using HouseRentingSystem.Web.ViewModels.Category;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,19 @@ namespace HouseRentingSystem.Services.Data
             return allCategories;
         }
 
+		public async Task<IEnumerable<AllCategoriesViewModel>> AllCategoriesForListAsync()
+		{
+            IEnumerable<AllCategoriesViewModel> allCategories = await context.Categories
+                .AsNoTracking()
+                .Select(c => new AllCategoriesViewModel 
+                {
+                    Id= c.Id,
+                    Name = c.Name
+                }).ToArrayAsync();
+
+            return allCategories;
+		}
+
 		public async Task<IEnumerable<string>> AllCategoryNamesAsync()
 		{
 			IEnumerable<string> allNames = await context
@@ -41,6 +55,17 @@ namespace HouseRentingSystem.Services.Data
 		{
 			bool result = await context.Categories.AnyAsync(c => c.Id == id);
             return result;
+		}
+
+		public async Task<CategoryDetailsViewModel> GetDetailsByIdAsync(int id)
+		{
+            Category category = await context.Categories.FirstAsync(c => c.Id == id);
+			CategoryDetailsViewModel viewModel = new CategoryDetailsViewModel() 
+            {
+                Id = category.Id,
+                Name = category.Name
+            };
+            return viewModel;
 		}
 	}
 }

@@ -3,13 +3,12 @@ using HouseRentingSystem.Data.Models;
 using HouseRentingSystem.Services.Data.Interfaces;
 using HouseRentingSystem.Web.Infrastructure.Extensions;
 using HouseRentingSystem.Web.Infrastructure.ModelBinders;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystem.Web
 {
-    public class Program
+	public class Program
     {
         public static void Main(string[] args)
         {
@@ -60,6 +59,15 @@ namespace HouseRentingSystem.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseEndpoints(config =>
+            {
+                config.MapControllerRoute(name: "ProtectingUrlPattern",
+                    pattern: "/{controller}/{action}/{id}/{information}",
+                    defaults: new { Controller = "Category", Action = "Details"});
+                config.MapDefaultControllerRoute();
+                config.MapRazorPages();
+            });
 
             app.MapDefaultControllerRoute();
             app.MapRazorPages();

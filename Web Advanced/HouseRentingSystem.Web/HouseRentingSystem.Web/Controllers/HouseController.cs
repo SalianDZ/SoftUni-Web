@@ -4,12 +4,11 @@ using HouseRentingSystem.Web.Infrastructure.Extensions;
 using HouseRentingSystem.Web.ViewModels.House;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata;
 using static HouseRentingSystem.Common.NotificationMessagesConstants;
 
 namespace HouseRentingSystem.Web.Controllers
 {
-    [Authorize]
+	[Authorize]
     public class HouseController : Controller
     {
         private readonly IHouseService houseService;
