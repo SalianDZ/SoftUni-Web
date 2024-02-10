@@ -15,5 +15,13 @@ namespace SoftUniBazar.Services.Interfaces
         Task<bool> IsUserByIdOwnerOfTheAd(string userId, int adId);
 
         Task EditAdByIdAsync(AdFormViewModel model, int id);
+
+        Task<bool> DoesAdExistByIdAsync(int id);
+
+        Task<bool> AdAlreadyAddedByIdAsync(int id, string userId);
+
+        Task AddAdToUserCollectionAsync(int id, string userId);
+
+        Task RemoveAdFromUserCollectionAsync(int id, string userId);
     }
 }

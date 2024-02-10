@@ -16,6 +16,24 @@ namespace SoftUniBazar.Services
             this.dbContext = dbContext;    
         }
 
+        public async Task<bool> AdAlreadyAddedByIdAsync(int id, string userId)
+        {
+            bool result = await dbContext.AdBuyers.AnyAsync(ab => ab.AdId == id && ab.BuyerId == userId);
+            return result;
+        }
+
+        public async Task AddAdToUserCollectionAsync(int id, string userId)
+        {
+            AdBuyer adBuyer = new()
+            {
+                AdId = id,
+                BuyerId = userId
+            };
+
+            await dbContext.AdBuyers.AddAsync(adBuyer);
+            await dbContext.SaveChangesAsync();
+        }
+
         public async Task CreateAdAsync(AdFormViewModel model, string ownerId)
         {
             Ad ad = new Ad() 
@@ -31,6 +49,12 @@ namespace SoftUniBazar.Services
 
             await dbContext.Ads.AddAsync(ad);
             await dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> DoesAdExistByIdAsync(int id)
+        {
+            bool result = await dbContext.Ads.AnyAsync(a => a.Id == id);
+            return result;
         }
 
         public async Task EditAdByIdAsync(AdFormViewModel model, int id)
@@ -112,6 +136,16 @@ namespace SoftUniBazar.Services
             Ad ad = await dbContext.Ads.FirstAsync(a => a.Id == adId);
             bool result = ad.OwnerId == userId;
             return result;
+        }
+
+        public async Task RemoveAdFromUserCollectionAsync(int id, string userId)
+        {
+            AdBuyer adBuyer =
+                await dbContext.AdBuyers
+                .FirstAsync(ab => ab.AdId == id && ab.BuyerId == userId);
+
+            dbContext.AdBuyers.Remove(adBuyer);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

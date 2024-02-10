@@ -119,5 +119,35 @@ namespace SoftUniBazar.Controllers
             await adService.EditAdByIdAsync(model, id);
             return RedirectToAction("All", "Ad");
         }
+
+        public async Task<IActionResult> AddToCart(int id)
+        {
+            string userId = User.GetUserId();
+            bool doesAdExist = await adService.DoesAdExistByIdAsync(id);
+            bool isAlreadyAdded = await adService.AdAlreadyAddedByIdAsync(id, userId);
+
+            if (!doesAdExist || isAlreadyAdded) 
+            {
+                return RedirectToAction("All", "Ad");
+            }
+
+            await adService.AddAdToUserCollectionAsync(id, userId);
+            return RedirectToAction("Cart", "Ad");
+        }
+
+        public async Task<IActionResult> RemoveFromCart(int id)
+        {
+            string userId = User.GetUserId();
+            bool doesAdExist = await adService.DoesAdExistByIdAsync(id);
+            bool isAlreadyAdded = await adService.AdAlreadyAddedByIdAsync(id, userId);
+
+            if (!doesAdExist || !isAlreadyAdded)
+            {
+                return RedirectToAction("Cart", "Ad");
+            }
+
+            await adService.RemoveAdFromUserCollectionAsync(id, userId);
+            return RedirectToAction("Cart", "Ad");
+        }
     }
 }
