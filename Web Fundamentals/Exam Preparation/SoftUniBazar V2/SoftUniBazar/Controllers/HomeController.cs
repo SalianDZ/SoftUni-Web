@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SoftUniBazar.Extensions;
 using SoftUniBazar.Models;
 using System.Diagnostics;
 
@@ -8,7 +9,13 @@ namespace SoftUniBazar.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            string userId = User.GetUserId();
+            if (userId == null)
+            {
+                return View();
+            }
+
+            return RedirectToAction("All", "Ad");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
