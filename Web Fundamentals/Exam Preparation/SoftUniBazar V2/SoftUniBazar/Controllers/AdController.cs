@@ -90,6 +90,8 @@ namespace SoftUniBazar.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(AdFormViewModel model, int id)
         {
+            //Here, it is good to check if the id is valid, because they can send us directly post
+        //method with software that is capable of doing this. (In this case, the id is not checked!)
             if (model == null)
             {
                 return RedirectToAction("All", "Ad");
