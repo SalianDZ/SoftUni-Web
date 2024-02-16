@@ -19,5 +19,11 @@ namespace Homies.Services.Contracts
 		Task EditEventByIdAsync(int id, EventFormViewModel model);
 
 		Task<bool> DoesEventExistByIdAsync(int id);
+
+		Task<bool> IsEventAlreadyJoinedByUserAsync(string userId, int eventId);
+
+		Task JoinEventByIdAsync(string userId, int eventId);
+
+		Task LeaveEventByIdAsync(string userId, int eventId);
 	}
 }

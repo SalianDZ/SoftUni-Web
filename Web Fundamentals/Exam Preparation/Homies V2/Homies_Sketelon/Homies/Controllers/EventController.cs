@@ -129,5 +129,57 @@ namespace Homies.Controllers
 			await eventService.EditEventByIdAsync(id, model);
 			return RedirectToAction("All", "Event");
         }
-	}
+
+		public async Task<IActionResult> Join(int id)
+		{
+            bool doesEventExist = await eventService.DoesEventExistByIdAsync(id);
+            if (!doesEventExist)
+            {
+                return RedirectToAction("All", "Event");
+            }
+
+            string userId = User.GetUserId();
+            bool isCurrentUserOwnerOfEvent = await eventService.IsCurrentUserOwnerOfEventByIdAsync(userId, id);
+
+            if (isCurrentUserOwnerOfEvent)
+            {
+                return RedirectToAction("All", "Event");
+            }
+
+			bool isAlreadyJoined = await eventService.IsEventAlreadyJoinedByUserAsync(userId, id);
+			if (isAlreadyJoined)
+			{
+                return RedirectToAction("All", "Event");
+            }
+
+			await eventService.JoinEventByIdAsync(userId, id);
+			return RedirectToAction("Joined", "Event");
+        }
+
+        public async Task<IActionResult> Leave(int id)
+        {
+            bool doesEventExist = await eventService.DoesEventExistByIdAsync(id);
+            if (!doesEventExist)
+            {
+                return RedirectToAction("All", "Event");
+            }
+
+            string userId = User.GetUserId();
+            bool isCurrentUserOwnerOfEvent = await eventService.IsCurrentUserOwnerOfEventByIdAsync(userId, id);
+
+            if (isCurrentUserOwnerOfEvent)
+            {
+                return RedirectToAction("All", "Event");
+            }
+
+            bool isAlreadyJoined = await eventService.IsEventAlreadyJoinedByUserAsync(userId, id);
+            if (!isAlreadyJoined)
+            {
+                return RedirectToAction("All", "Event");
+            }
+
+            await eventService.LeaveEventByIdAsync(userId, id);
+            return RedirectToAction("Joined", "Event");
+        }
+    }
 }

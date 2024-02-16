@@ -116,5 +116,30 @@ namespace Homies.Services
 			Event currentEvent = await context.Events.FirstAsync(e => e.Id == eventId);
 			return userId == currentEvent.OrganiserId;
 		}
-	}
+
+        public async Task<bool> IsEventAlreadyJoinedByUserAsync(string userId, int eventId)
+        {
+			bool result = await context.EventsParticipants.AnyAsync(ep => ep.EventId == eventId && ep.HelperId == userId);
+			return result;
+        }
+
+        public async Task JoinEventByIdAsync(string userId, int eventId)
+        {
+			EventParticipant eventParticipant = new()
+			{ 
+				EventId = eventId,
+				HelperId = userId
+			};
+
+			await context.EventsParticipants.AddAsync(eventParticipant);
+			await context.SaveChangesAsync();
+        }
+
+        public async Task LeaveEventByIdAsync(string userId, int eventId)
+        {
+			EventParticipant eventParticipant = await context.EventsParticipants.FirstAsync(ep => ep.EventId == eventId && ep.HelperId == userId);
+			context.EventsParticipants.Remove(eventParticipant);
+			await context.SaveChangesAsync();
+        }
+    }
 }
