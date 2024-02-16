@@ -7,7 +7,7 @@ using static Homies.Data.ValidationConstants.EventValidations;
 
 namespace Homies.Services
 {
-	public class EventService : IEventService
+    public class EventService : IEventService
 	{
 		private readonly HomiesDbContext context;
         public EventService(HomiesDbContext context)
@@ -32,7 +32,25 @@ namespace Homies.Services
 			await context.SaveChangesAsync();
 		}
 
-		public async Task<IEnumerable<EventViewModel>> GetAllEventsAsync()
+        public async Task<bool> DoesEventExistByIdAsync(int id)
+        {
+			bool result = await context.Events.AnyAsync(e => e.Id == id);
+			return result;
+        }
+
+        public async Task EditEventByIdAsync(int id, EventFormViewModel model)
+        {
+            Event? @event = await context.Events.FindAsync(id);
+			@event!.Name = model.Name;
+			@event.Description = model.Description;	
+			@event.Start = model.Start;
+			@event.End = model.End;
+			@event.TypeId = model.TypeId;
+
+			await context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<EventViewModel>> GetAllEventsAsync()
 		{
 			IEnumerable<EventViewModel> allEvents = await context.Events
 				.Include(e => e.Type)
@@ -46,6 +64,20 @@ namespace Homies.Services
 			}).ToListAsync();
 
 			return allEvents;
+		}
+
+		public async Task<EventEditViewModel?> GetEventEditViewModelByIdAsync(int id)
+		{
+			EventEditViewModel? model = await context.Events.Where(e => e.Id == id).Select(e => new EventEditViewModel
+			{
+				Name = e.Name,
+				Description = e.Description,
+				Start = e.Start.ToString(DateFormat),
+				End = e.End.ToString(DateFormat),
+				TypeId = e.TypeId
+			}).FirstOrDefaultAsync();
+
+			return model;
 		}
 
 		public async Task<EventFormViewModel?> GetEventFormModelByIdAsync(int id)

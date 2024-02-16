@@ -90,5 +90,44 @@ namespace Homies.Controllers
 			viewModel.Types = await typeService.GetAllTypesAsync();
 			return View(viewModel);
 		}
+
+		public async Task<IActionResult> Edit(EventFormViewModel model, int id)
+		{
+			bool doesEventExist = await eventService.DoesEventExistByIdAsync(id);
+			if (!doesEventExist)
+			{
+                return RedirectToAction("All", "Event");
+            }
+
+			if (model == null)
+			{
+                return RedirectToAction("All", "Event");
+            }
+
+            string userId = User.GetUserId();
+            bool isCurrentUserOwnerOfEvent = await eventService.IsCurrentUserOwnerOfEventByIdAsync(userId, id);
+
+
+            if (!isCurrentUserOwnerOfEvent)
+            {
+                return RedirectToAction("All", "Event");
+            }
+
+            bool doesTypeExist = await typeService.DoesTypeExistByIdAsync(model.TypeId);
+
+            if (!doesTypeExist)
+            {
+                ModelState.AddModelError(nameof(model.TypeId), "Please select a valid type for the event!");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.Types = await typeService.GetAllTypesAsync();
+                return View(model);
+            }
+
+			await eventService.EditEventByIdAsync(id, model);
+			return RedirectToAction("All", "Event");
+        }
 	}
 }

@@ -12,6 +12,12 @@ namespace Homies.Services.Contracts
 
 		Task<EventFormViewModel?> GetEventFormModelByIdAsync(int id);
 
+		Task<EventEditViewModel?> GetEventEditViewModelByIdAsync(int id);
+
 		Task<bool> IsCurrentUserOwnerOfEventByIdAsync(string userId, int eventId);
+
+		Task EditEventByIdAsync(int id, EventFormViewModel model);
+
+		Task<bool> DoesEventExistByIdAsync(int id);
 	}
 }
