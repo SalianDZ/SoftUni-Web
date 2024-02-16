@@ -66,7 +66,24 @@ namespace Homies.Services
 			return allEvents;
 		}
 
-		public async Task<EventEditViewModel?> GetEventEditViewModelByIdAsync(int id)
+        public async Task<EventDetailsViewModel> GetEventDetailsModelByIdAsync(int id)
+        {
+            EventDetailsViewModel model = await context.Events.Where(e => e.Id == id).Select(e => new EventDetailsViewModel
+			{ 
+				Id= e.Id,
+				Name = e.Name,
+				Description = e.Description,
+				Start = e.Start.ToString(DateFormat),
+				End = e.End.ToString(DateFormat),
+				CreatedOn = e.CreatedOn.ToString(DateFormat),
+				Type = e.Type.Name,
+				Organiser = e.Organiser.UserName
+			}).FirstAsync();
+
+			return model;
+        }
+
+        public async Task<EventEditViewModel?> GetEventEditViewModelByIdAsync(int id)
 		{
 			EventEditViewModel? model = await context.Events.Where(e => e.Id == id).Select(e => new EventEditViewModel
 			{

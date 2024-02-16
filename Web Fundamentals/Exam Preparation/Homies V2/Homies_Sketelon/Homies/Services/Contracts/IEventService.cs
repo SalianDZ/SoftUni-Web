@@ -25,5 +25,7 @@ namespace Homies.Services.Contracts
 		Task JoinEventByIdAsync(string userId, int eventId);
 
 		Task LeaveEventByIdAsync(string userId, int eventId);
+
+		Task<EventDetailsViewModel> GetEventDetailsModelByIdAsync(int id);
 	}
 }

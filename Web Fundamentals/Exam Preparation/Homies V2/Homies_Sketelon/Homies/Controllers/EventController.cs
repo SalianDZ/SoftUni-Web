@@ -181,5 +181,24 @@ namespace Homies.Controllers
             await eventService.LeaveEventByIdAsync(userId, id);
             return RedirectToAction("Joined", "Event");
         }
+
+		public async Task<IActionResult> Details(int id)
+		{
+			try
+			{
+                bool doesEventExist = await eventService.DoesEventExistByIdAsync(id);
+                if (!doesEventExist)
+                {
+                    return RedirectToAction("All", "Event");
+                }
+
+                EventDetailsViewModel model = await eventService.GetEventDetailsModelByIdAsync(id);
+                return View(model);
+            }
+			catch (Exception)
+			{
+				return StatusCode(500);
+			}
+        }
     }
 }
