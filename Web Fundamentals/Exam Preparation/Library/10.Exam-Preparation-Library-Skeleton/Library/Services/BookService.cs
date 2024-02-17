@@ -1,4 +1,5 @@
 ﻿using Library.Data;
+using Library.Data.Models;
 using Library.Models.Book;
 using Library.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,18 @@ namespace Library.Services
         public BookService(LibraryDbContext context)
         {
             this.context = context; 
+        }
+
+        public async Task AddBookToCollectionByIdAsync(int bookId, string userId)
+        {
+            IdentityUserBook iub = new()
+            {
+                BookId = bookId,
+                CollectorId = userId
+            };
+
+            await context.UsersBooks.AddAsync(iub);
+            await context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<BookViewModel>> GetAllBooksAsync()
@@ -51,6 +64,26 @@ namespace Library.Services
             }).ToArrayAsync();
 
             return books;
+        }
+
+        public async Task<bool> IsBookInUserCollectionAsync(int bookId, string userId)
+        {
+            bool result = await context.UsersBooks.AnyAsync(ub => ub.CollectorId == userId && ub.BookId == bookId);
+            return result;
+        }
+
+        public async Task<bool> IsBookValidByIdAsync(int bookId)
+        {
+            bool result = await context.Books.AnyAsync(b => b.Id == bookId);
+            return result;
+        }
+
+        public async Task RemoveBookFromCollectionByIdAsync(int bookId, string userId)
+        {
+            IdentityUserBook iub = await context.UsersBooks.FirstAsync(ub => ub.BookId == bookId && ub.CollectorId == userId);
+
+            context.UsersBooks.Remove(iub);
+            await context.SaveChangesAsync();
         }
     }
 }
