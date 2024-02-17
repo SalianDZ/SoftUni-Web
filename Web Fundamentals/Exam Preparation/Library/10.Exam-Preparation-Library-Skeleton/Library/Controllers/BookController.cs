@@ -11,10 +11,12 @@ namespace Library.Controllers
     public class BookController : Controller
     {
         private readonly IBookService bookService;
+        private readonly ICategoryService categoryService;
 
-        public BookController(IBookService bookService)
+        public BookController(IBookService bookService, ICategoryService categoryService)
         {
             this.bookService = bookService;
+            this.categoryService = categoryService;
         }
 
         public async Task<IActionResult> All()
@@ -66,6 +68,39 @@ namespace Library.Controllers
 
             await bookService.RemoveBookFromCollectionByIdAsync(id, User.GetUserId());
             return RedirectToAction("Mine", "Book");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Add()
+        {
+            BookFormViewModel model = new BookFormViewModel();
+            model.Categories = await categoryService.GetAllCategoriesAsync();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(BookFormViewModel model)
+        {
+            if (model == null)
+            {
+                return RedirectToAction("All", "Book");
+            }
+
+            bool isCategoryValid = await categoryService.IsCategoryByIdValidAsync(model.CategoryId);
+
+            if (!isCategoryValid)
+            {
+                ModelState.AddModelError(nameof(model.CategoryId), "Please select a valid category!");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.Categories = await categoryService.GetAllCategoriesAsync();
+                return View(model);
+            }
+
+            await bookService.AddBook(model);
+            return RedirectToAction("All", "Book");
         }
     }
 }

@@ -15,6 +15,22 @@ namespace Library.Services
             this.context = context; 
         }
 
+        public async Task AddBook(BookFormViewModel model)
+        {
+            Book book = new Book()
+            { 
+                Title = model.Title,
+                Author = model.Author,
+                Description = model.Description,
+                CategoryId = model.CategoryId,
+                ImageUrl = model.Url,
+                Rating = model.Rating,
+            };
+
+            await context.Books.AddAsync(book);
+            await context.SaveChangesAsync();
+        }
+
         public async Task AddBookToCollectionByIdAsync(int bookId, string userId)
         {
             IdentityUserBook iub = new()

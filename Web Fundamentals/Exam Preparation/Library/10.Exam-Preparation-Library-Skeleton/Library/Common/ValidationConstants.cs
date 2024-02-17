@@ -15,8 +15,8 @@
 
             public const int UrlMaxLength = 2048;
 
-            public const string RatingMinValue = "0.00";
-            public const string RatingMaxValue = "10.00";
+            public const double RatingMinValue = 0.00;
+            public const double RatingMaxValue = 10.00;
         }
 
         public static class CategoryValidation
