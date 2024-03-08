@@ -14,11 +14,13 @@ namespace HouseRentingSystem.Web.Controllers
         private readonly IHouseService houseService;
         private readonly ICategoryService categoryService;
         private readonly IAgentService agentService;
-        public HouseController(IHouseService houseService, ICategoryService categoryService, IAgentService agentService)
+		private readonly IUserService userService;
+        public HouseController(IHouseService houseService, ICategoryService categoryService, IAgentService agentService, IUserService userService)
         {
             this.houseService = houseService;
             this.categoryService = categoryService;
             this.agentService = agentService;
+			this.userService = userService;
         }
 
         [AllowAnonymous]
@@ -144,6 +146,7 @@ namespace HouseRentingSystem.Web.Controllers
             try
             {
 				HouseDetailsViewModel viewModel = await houseService.GetDetailsByIdAsync(id);
+				viewModel.Agent.FullName = await userService.GetFullNameByEmailAsync(User.Identity?.Name!);
 				return View(viewModel);
 			}
             catch (Exception)

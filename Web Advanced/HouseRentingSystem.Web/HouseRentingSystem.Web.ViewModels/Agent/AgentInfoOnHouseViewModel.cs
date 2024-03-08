@@ -8,5 +8,7 @@ namespace HouseRentingSystem.Web.ViewModels.Agent
 
         [Display(Name ="Phone")]
         public string PhoneNumber { get; set; } = null!;
+
+        public string FullName { get; set; } = null!;
     }
 }

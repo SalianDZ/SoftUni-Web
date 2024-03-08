@@ -6,9 +6,11 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject IAgentService AgentService;
+@inject IUserService UserService;
 
 @{
     bool isAgent = await AgentService.AgentExistByUserIdAsync(User.GetId());
+    string fullName = await UserService.GetFullNameByEmailAsync(User.Identity?.Name!);
 }
 
 <ul class="navbar-nav">
@@ -16,7 +18,7 @@
 {
         
     <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello, @User.Identity?.Name!</a>
+        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello, @fullName</a>
     </li>
     @if (!isAgent)
     {

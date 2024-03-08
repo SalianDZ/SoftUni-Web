@@ -1,5 +1,6 @@
 ﻿using HouseRentingSystem.Data.Models;
 using HouseRentingSystem.Web.ViewModels.User;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +13,12 @@ namespace HouseRentingSystem.Web.Controllers
 	{
 		private readonly SignInManager<ApplicationUser> signInManager;
 		private readonly UserManager<ApplicationUser> userManager;
-		private readonly IUserStore<ApplicationUser> userStore;
 
         public UserController(SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager,
-            IUserStore<ApplicationUser> userStore)
+            UserManager<ApplicationUser> userManager)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
-            this.userStore = userStore;
         }
 
 
@@ -59,6 +57,43 @@ namespace HouseRentingSystem.Web.Controllers
                 }
             }
 
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Login(string? returnUrl = null) 
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            LoginFormModel model = new()
+            { 
+                ReturnUrl = returnUrl
+            };
+            return View(model);
+        }
+
+        public async Task<IActionResult> Login(LoginFormModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // This doesn't count login failures towards account lockout
+                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    return LocalRedirect(model.ReturnUrl ?? "/Home/Index");
+                }
+                if (result.IsLockedOut)
+                {
+                    return RedirectToPage("./Lockout");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return View(model);
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
             return View(model);
         }
 	}
