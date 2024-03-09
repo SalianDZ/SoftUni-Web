@@ -6,6 +6,7 @@ using HouseRentingSystem.Web.Infrastructure.ModelBinders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using static HouseRentingSystem.Common.GeneralApplicationConstants;
 
 namespace HouseRentingSystem.Web
 {
@@ -28,6 +29,7 @@ namespace HouseRentingSystem.Web
                 options.Password.RequireNonAlphanumeric = builder.Configuration.GetValue<bool>("Identity:Password:RequireNonAlphanumeric");
                 options.Password.RequiredLength = builder.Configuration.GetValue<int>("Identity:Password:RequiredLength");
             })
+                .AddRoles<IdentityRole<Guid>>() 
                 .AddEntityFrameworkStores<HouseRentingDbContext>();
             builder.Services.AddApplicationServices(typeof(IHouseService));
             builder.Services.ConfigureApplicationCookie(cfg =>
@@ -64,6 +66,8 @@ namespace HouseRentingSystem.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.SeedAdministrator(DevelopmentAdminEmail);
 
             app.UseEndpoints(config =>
             {
