@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using static HouseRentingSystem.Common.GeneralApplicationConstants;
+using HouseRentingSystem.Web.ViewModels.Home;
+using HouseRentingSystem.Services.Mapping;
 
 namespace HouseRentingSystem.Web
 {
@@ -47,6 +49,9 @@ namespace HouseRentingSystem.Web
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+
+            AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();

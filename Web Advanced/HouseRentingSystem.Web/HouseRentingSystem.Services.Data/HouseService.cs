@@ -3,6 +3,7 @@ using HouseRentingSystem.Data.Models;
 using HouseRentingSystem.Services.Data.Interfaces;
 using HouseRentingSystem.Services.Data.Models.House;
 using HouseRentingSystem.Services.Data.Models.Statistics;
+using HouseRentingSystem.Services.Mapping;
 using HouseRentingSystem.Web.ViewModels.Agent;
 using HouseRentingSystem.Web.ViewModels.Home;
 using HouseRentingSystem.Web.ViewModels.House;
@@ -256,12 +257,7 @@ namespace HouseRentingSystem.Services.Data
                 .Where(h => h.IsActive)
                 .OrderByDescending(h => h.CreatedOn)
                 .Take(3)
-                .Select(h => new IndexViewModel()
-                {
-                    Id = h.Id.ToString(),
-                    Title = h.Title,
-                    ImageUrl = h.ImageUrl
-                })
+                .To<IndexViewModel>()
                 .ToArrayAsync();
 
             return lastThreeHouses;

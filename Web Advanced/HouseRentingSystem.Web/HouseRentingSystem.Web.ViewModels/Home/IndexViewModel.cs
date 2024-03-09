@@ -1,6 +1,9 @@
-﻿namespace HouseRentingSystem.Web.ViewModels.Home
+﻿using HouseRentingSystem.Services.Mapping;
+using HouseRentingSystem.Data.Models;
+
+namespace HouseRentingSystem.Web.ViewModels.Home
 {
-    public class IndexViewModel
+    public class IndexViewModel : IMapFrom<Data.Models.House>
     {
         public string Id { get; set; } = null!;
 
