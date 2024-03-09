@@ -1,4 +1,5 @@
-﻿using HouseRentingSystem.Data;
+﻿using AutoMapper;
+using HouseRentingSystem.Data;
 using HouseRentingSystem.Data.Models;
 using HouseRentingSystem.Services.Data.Interfaces;
 using HouseRentingSystem.Services.Data.Models.House;
@@ -15,10 +16,12 @@ namespace HouseRentingSystem.Services.Data
 	public class HouseService : IHouseService
     {
         private readonly HouseRentingDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public HouseService(HouseRentingDbContext dbContext)
+        public HouseService(HouseRentingDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
 		public async Task<AllHousesFilteredAndPagedServiceModel> AllAsync(AllHousesQueryModel queryModel)
@@ -117,20 +120,12 @@ namespace HouseRentingSystem.Services.Data
 
 		public async Task<string> CreateAndReturnIdAsync(HouseFormModel formModel, string agentId)
 		{
-            House house = new House()
-            { 
-                Title = formModel.Title,
-                Address = formModel.Address,
-                Description = formModel.Description,
-                PricePerMonth = formModel.PricePerMonth,
-                ImageUrl = formModel.ImageUrl,
-                CategoryId = formModel.CategoryId,
-                AgentId = Guid.Parse(agentId)
-            };
+            House newHouse = mapper.Map<House>(formModel);
+            newHouse.AgentId = Guid.Parse(agentId);
 
-            await dbContext.Houses.AddAsync(house);
+            await dbContext.Houses.AddAsync(newHouse);
             await dbContext.SaveChangesAsync();
-            return house.Id.ToString();
+            return newHouse.Id.ToString();
 		}
 
 		public async Task DeleteHouseByIdAsync(string houseId)

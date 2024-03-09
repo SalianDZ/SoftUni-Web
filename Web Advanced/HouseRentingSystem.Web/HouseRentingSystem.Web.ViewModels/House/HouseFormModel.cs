@@ -1,10 +1,12 @@
-﻿using HouseRentingSystem.Web.ViewModels.Category;
+﻿using AutoMapper;
+using HouseRentingSystem.Services.Mapping;
+using HouseRentingSystem.Web.ViewModels.Category;
 using System.ComponentModel.DataAnnotations;
 using static HouseRentingSystem.Common.EntityValidationConstants.House;
 
 namespace HouseRentingSystem.Web.ViewModels.House
 {
-    public class HouseFormModel
+    public class HouseFormModel : IMapTo<Data.Models.House>, IHaveCustomMappings
     {
         public HouseFormModel()
         {
@@ -36,5 +38,11 @@ namespace HouseRentingSystem.Web.ViewModels.House
         public int CategoryId { get; set; }
 
         public IEnumerable<HouseSelectCategoryFormModel> Categories { get; set; }
+
+        public void CreateMappings(IProfileExpression configuration)
+        {
+            configuration.CreateMap<HouseFormModel, Data.Models.House>()
+                .ForMember(d => d.AgentId, opt => opt.Ignore());
+        }
     }
 }
